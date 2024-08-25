@@ -4,7 +4,7 @@ import java.util.List;
 
 public class SyncReport {
 
-    void AddEntry(){}
+    void addEntry(String entry){}
 
     String getSummary(){return null;}
 
