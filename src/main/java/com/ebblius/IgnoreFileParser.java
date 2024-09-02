@@ -15,12 +15,17 @@ public class IgnoreFileParser {
 
     public IgnoreFileParser(File ignoreFile) {
         this.paths = new ArrayList<>();
-        makePaths(ignoreFile.toPath());
+        Path ignorePath = ignoreFile.toPath();
+        if (!ignorePath.isAbsolute())
+            ignorePath = PROJECT_PATH.resolve(ignorePath);
+        makePaths(ignorePath);
     }
 
-    public IgnoreFileParser(Path ignoreFile) {
+    public IgnoreFileParser(Path ignorePath) {
         this.paths = new ArrayList<>();
-        makePaths(ignoreFile);
+        if (!ignorePath.isAbsolute())
+            ignorePath = PROJECT_PATH.resolve(ignorePath);
+        makePaths(ignorePath);
     }
 
     private void makePaths(Path ignoreFile) {
@@ -48,19 +53,19 @@ public class IgnoreFileParser {
 
     private void addRelativePaths(Stream<Path> wildcardPaths) {
         PatternMatcher matcher = new PatternMatcher();
-        Set<Path> paths = new HashSet<>();
-        try (Stream<Path> ctx = Files.walk(PROJECT_PATH, Integer.MAX_VALUE).skip(1L)) {
+        Set<Path> pathSet = new HashSet<>();
+        try (Stream<Path> ctx = Files.walk(PROJECT_PATH)) {
             List<Path> ctxList = ctx.toList();
             wildcardPaths.forEach(path -> {
                 if (isExcludePath(path))
-                    matcher.getRelativePaths(path, ctxList).forEach(paths::remove);
+                    matcher.getRelativePaths(path, ctxList).forEach(pathSet::remove);
                 else
-                    paths.addAll(matcher.getRelativePaths(path, ctxList));
+                    pathSet.addAll(matcher.getRelativePaths(path, ctxList));
             });
         } catch (IOException e) {
             Logger.getInstance().error(e.getMessage());
         }
-        this.paths.addAll(paths);
+        paths.addAll(pathSet);
     }
 
     public boolean shouldIgnore(Path file) {
@@ -89,8 +94,8 @@ public class IgnoreFileParser {
             String regex = expr.replaceAll("(\\[!(.*)])", "[^$2]")
                     .replaceFirst("^!", "")
                     .replaceAll("(\\\\)(.)", "$2")
-                    .replaceAll("\\.", "\\\\.")
-                    .replaceAll("\\?", ".")
+                    .replace(".", "\\.")
+                    .replace("?", ".")
                     .replaceAll("\\*\\*/?", ".*")
                     .replaceAll("(?<!\\.)(\\*)", ".*");
             return Pattern.compile(String.format("%s%s%s", isRoot ? "^" : "", regex, isDir ? "/" : ""));

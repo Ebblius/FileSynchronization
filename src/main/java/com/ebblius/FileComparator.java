@@ -1,52 +1,53 @@
 package com.ebblius;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
+import java.util.stream.Stream;
 
 public class FileComparator {
 
-    boolean compareFiles(File file1, File file2) throws FileNotFoundException, IOException{
-        
-        if(file1.length() != file2.length() || file1.lastModified() != file2.lastModified())
+    public boolean compareFiles(Path src, Path dest) throws IOException {
+
+        if (Files.size(src) != Files.size(dest) ||
+                !Files.getLastModifiedTime(src).equals(Files.getLastModifiedTime(dest)))
             return false;
-        
-        BufferedReader bReader1 = new BufferedReader(new FileReader(file1));
-        BufferedReader bReader2 = new BufferedReader(new FileReader(file2));
-        
-        String line1 = "", line2 = "";
-        while((line1 = bReader1.readLine()) != null && ((line2 = bReader2.readLine()) != null)){
-            if(line1 == null ? line2 != null : !line1.equals(line2))
-                return false;
+
+        try (Stream<String> srcLineStream = Files.lines(src);
+             Stream<String> destLineStream = Files.lines(dest)) {
+
+            Iterator<String> srcLines = srcLineStream.iterator();
+            Iterator<String> destLines = destLineStream.iterator();
+
+            while (srcLines.hasNext() || destLines.hasNext()) {
+                String srcLine = srcLines.hasNext() ? srcLines.next() : null;
+                String destLine = destLines.hasNext() ? destLines.next() : null;
+
+                if (!Objects.equals(srcLine, destLine)) {
+                    return false;
+                }
+            }
         }
-        return line1 == null && line2 == null;
+        return true;
     }
 
-    List<String> getDifferences(File file1, File file2) throws FileNotFoundException, IOException{
-        List<String> lines1 = new LinkedList();
-        List<String> lines2 = new LinkedList();
-        
-        BufferedReader bReader1 = new BufferedReader(new FileReader(file1));
-        BufferedReader bReader2 = new BufferedReader(new FileReader(file2));
-        
-        String line;
-        while((line = bReader1.readLine()) != null)
-        lines1.add(line);
-        while((line = bReader2.readLine()) != null)
-        lines1.add(line);
-        
-        List<String> differences = new LinkedList<>(lines1);
-        differences.addAll(lines2);
-        List<String> commonLines = new LinkedList<>(lines2);
-        commonLines.retainAll(lines2);
-        differences.removeAll(commonLines);
-        
-        return differences;
+    public List<String> getDifferences(Path src, Path dest) throws IOException {
+        List<String> differences = new ArrayList<>();
+
+        try (Stream<String> srcLineStream = Files.lines(src);
+             Stream<String> destLineStream = Files.lines(dest)) {
+
+            Set<String> srcLineSet = srcLineStream.collect(HashSet::new, HashSet::add, HashSet::addAll);
+            destLineStream.forEach(
+                    line -> srcLineSet.removeIf(
+                            srcLine -> Objects.equals(srcLine, line)
+                    )
+            );
+
+            differences.addAll(srcLineSet);
+        }
+
+        return differences.stream().toList();
     }
- }
+}

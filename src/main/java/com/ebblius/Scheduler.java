@@ -4,11 +4,11 @@ import java.util.Date;
 
 public class Scheduler {
 
-    void scheduleSync(Date time){}
+    void scheduleSync(Date time) {
+    }
 
-    void startScheduledSync(){}
-
-
+    void startScheduledSync() {
+    }
 
 
 }

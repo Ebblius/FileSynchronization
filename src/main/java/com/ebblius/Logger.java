@@ -5,26 +5,10 @@ import org.apache.logging.log4j.LogManager;
 public class Logger {
 
     private static Logger instance;
-    private final org.apache.logging.log4j.Logger logger;
+    private final org.apache.logging.log4j.Logger log4jLogger;
 
     Logger() {
-        logger = LogManager.getLogger();
-    }
-
-    public void warn(Object message) {
-        logger.warn(message);
-    }
-
-    public void info(Object message) {
-        logger.info(message);
-    }
-
-    public void error(Object message) {
-        logger.error(message);
-    }
-
-    public void fatal(Object message) {
-        logger.fatal(message);
+        log4jLogger = LogManager.getLogger();
     }
 
     public static Logger getInstance() {
@@ -33,5 +17,21 @@ public class Logger {
                 instance = new Logger();
         }
         return instance;
+    }
+
+    public void warn(Object message) {
+        log4jLogger.warn(message);
+    }
+
+    public void info(Object message) {
+        log4jLogger.info(message);
+    }
+
+    public void error(Object message) {
+        log4jLogger.error(message);
+    }
+
+    public void fatal(Object message) {
+        log4jLogger.fatal(message);
     }
 }

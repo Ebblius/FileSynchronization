@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,16 +12,17 @@ import java.util.List;
 public class FileSynchronizer {
 
 
+    private final List<String> syncLog;
+    private final FileCopier fileCopier;
     private Path sourceDirectory;  // Kaynak dizin
     private Path targetDirectory;  // Hedef dizin
-    private final List<String>  syncLog=new ArrayList<>();
 
-    FileCopier fileCopier=new FileCopier();
+    public FileSynchronizer() {
+        this.syncLog = new ArrayList<>();
+        this.fileCopier = new FileCopier();
+    }
 
-
-
-
-    void startSynch() throws IOException{
+    public void startSynch() throws IOException {
         if (sourceDirectory == null || targetDirectory == null) {
             throw new IllegalStateException("Source and target directories must be set before syncing.");
         }
@@ -39,7 +39,7 @@ public class FileSynchronizer {
 
     private void syncDirectory(Path source, Path target) throws IOException {
         // Hedef dizin yoksa oluştur
-        if (!Files.exists(target)) {
+        if (Files.notExists(target)) {
             Files.createDirectories(target);
         }
 
@@ -75,10 +75,5 @@ public class FileSynchronizer {
     public void setTargetDirectory(Path target) {
         this.targetDirectory = target;
     }
-
-
-
-
-
 
 }

@@ -6,20 +6,19 @@ import java.util.List;
 public class SyncReport {
 
 
-    private List<String> entries;
+    private final List<String> entries;
 
     public SyncReport() {
         this.entries = new ArrayList<>();
     }
 
     // Rapor için yeni bir girdi ekler
-    void addEntry(String entry){
+    void addEntry(String entry) {
         entries.add(entry);
     }
 
-
     // Raporun özetini döndürür
-    String getSummary(){
+    String getSummary() {
         StringBuilder summary = new StringBuilder();
         summary.append("Sync Report Summary:\n");
         summary.append("Total actions: ").append(entries.size()).append("\n");
@@ -42,7 +41,7 @@ public class SyncReport {
     }
 
     // Detaylı raporu döndürür
-    List<String> getDetailedReport(){
+    List<String> getDetailedReport() {
         return entries;
     }
 
@@ -55,8 +54,6 @@ public class SyncReport {
             Logger.getInstance().info(entry);
         }
     }
-
-
 
 
 }

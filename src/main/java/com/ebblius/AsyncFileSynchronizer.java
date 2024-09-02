@@ -1,10 +1,14 @@
 package com.ebblius;
 
-public class AsyncFileSynchronizer extends FileSynchronizer{
+public class AsyncFileSynchronizer extends FileSynchronizer {
 
-    void startAsyncSync(){}
+    void startAsyncSync() {
 
-    void syncInBackground(){}
+    }
+
+    void syncInBackground() {
+
+    }
 
 
 }
