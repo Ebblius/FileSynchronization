@@ -84,7 +84,7 @@ public class IgnoreFileParser {
 
         boolean matches(Path target) {
             target = target.toAbsolutePath();
-            if (!target.startsWith(PROJECT_PATH))
+            if (!target.startsWith(PROJECT_PATH) || target.equals(PROJECT_PATH))
                 return false;
             target = target.subpath(PROJECT_PATH.getNameCount(), target.getNameCount());
             return pattern.matcher("/" + target).find();

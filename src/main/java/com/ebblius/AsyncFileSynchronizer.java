@@ -1,6 +1,6 @@
 package com.ebblius;
 
-public class AsyncFileSynchronizer extends FileSynchronizer {
+public class AsyncFileSynchronizer  {
 
     void startAsyncSync() {
 
