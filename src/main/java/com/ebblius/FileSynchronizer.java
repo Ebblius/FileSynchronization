@@ -1,76 +1,80 @@
 package com.ebblius;
 
-import java.io.File;
+
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class FileSynchronizer {
 
 
-//    private File sourceDir;
-//    private File targetDir;
-//    private FileComparator fileComparator;
-//    private FileCopier fileCopier;
-//    private SyncReport syncReport;
-//    private Logger logger;
-//    private IgnoreFileParser ignoreFileParser;
-//
-//    public FileSynchronizer(File sourceDir, File targetDir) {
-//        this.sourceDir = sourceDir;
-//        this.targetDir = targetDir;
-//        this.fileComparator = new FileComparator();
-//        this.fileCopier = new FileCopier();
-//        this.syncReport = new SyncReport();
-//        this.logger = new Logger();
-//        this.ignoreFileParser = new IgnoreFileParser(new File(".ignore"));
-//    }
-//
-//    public void startSync() {
-//        try {
-//            syncDirectory(sourceDir);
-//            logger.log("Synchronization completed.");
-//        } catch (IOException e) {
-//            logger.log("Synchronization failed: " + e.getMessage());
-//        }
-//    }
-//
-//    private void syncDirectory(File dir) throws IOException {
-//        File[] files = dir.listFiles();
-//
-//        if (files != null) {
-//            for (File file : files) {
-//                if (ignoreFileParser.shouldIgnore(file)) {
-//                    continue; // Dosya veya klasör .ignore dosyasında tanımlıysa göz ardı et
-//                }
-//
-//                Path relativePath = sourceDir.toPath().relativize(file.toPath());
-//                File targetFile = new File(targetDir, relativePath.toString());
-//
-//                if (file.isDirectory()) {
-//                    // Eğer bu bir klasörse, klasörü tekrar senkronize et
-//                    if (!targetFile.exists()) {
-//                        targetFile.mkdirs();
-//                    }
-//                    syncDirectory(file);
-//                } else {
-//                    // Eğer bu bir dosyaysa, karşılaştır ve kopyala
-//                    if (!targetFile.exists() || fileComparator.compareFiles(file, targetFile)) {
-//                        fileCopier.copyFile(file, targetFile);
-//                        syncReport.addEntry("Copied: " + file.getPath());
-//                        logger.log("Copied: " + file.getPath());
-//                    }
-//                }
-//            }
-//        }
-//    }
+    private Path sourceDirectory;  // Kaynak dizin
+    private Path targetDirectory;  // Hedef dizin
+    private final List<String>  syncLog=new ArrayList<>();
+
+    FileCopier fileCopier=new FileCopier();
 
 
 
-    void startSynch(){}
 
-    SyncReport generateReport(){return null;}
+    void startSynch() throws IOException{
+        if (sourceDirectory == null || targetDirectory == null) {
+            throw new IllegalStateException("Source and target directories must be set before syncing.");
+        }
 
-    void setSourceDirectory(File directory){}
+        Logger.getInstance().info("Starting synchronization...");
 
-    void setTargetDirectory(File targetDirectory){}
+        // Örnek senkronizasyon işlemi (Bu kısmı ihtiyaçlara göre genişletebilirsiniz)
+        syncDirectory(sourceDirectory, targetDirectory);
+        generateReport().printReport();
+
+
+        Logger.getInstance().info("Synchronization completed.");
+    }
+
+    private void syncDirectory(Path source, Path target) throws IOException {
+        // Hedef dizin yoksa oluştur
+        if (!Files.exists(target)) {
+            Files.createDirectories(target);
+        }
+
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(source)) {
+            for (Path entry : stream) {
+                Path targetPath = target.resolve(entry.getFileName());
+
+                if (Files.isDirectory(entry)) {
+                    syncDirectory(entry, targetPath);  // Rekürsif olarak alt dizinleri senkronize et
+                } else {
+                    fileCopier.copyFile(entry, targetPath);
+                    syncLog.add("File copied: " + entry + " to " + targetPath);
+                }
+            }
+        }
+    }
+
+    // Senkronizasyon raporunu oluşturur
+    public SyncReport generateReport() {
+        SyncReport report = new SyncReport();
+        for (String entry : syncLog) {
+            report.addEntry(entry);
+        }
+        return report;
+    }
+
+    // Kaynak dizini ayarlar
+    public void setSourceDirectory(Path source) {
+        this.sourceDirectory = source;
+    }
+
+    // Hedef dizini ayarlar
+    public void setTargetDirectory(Path target) {
+        this.targetDirectory = target;
+    }
 
 
 

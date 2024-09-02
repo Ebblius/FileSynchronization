@@ -7,7 +7,7 @@ public class Logger {
     private static Logger instance;
     private final org.apache.logging.log4j.Logger logger;
 
-    private Logger() {
+    Logger() {
         logger = LogManager.getLogger();
     }
 
