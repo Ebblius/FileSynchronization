@@ -1,6 +1,5 @@
 package com.ebblius;
 
-
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -14,7 +13,6 @@ public class Scheduler {
     private final ScheduledExecutorService scheduler;
     private Timer timer;
 
-    // Yapıcı metot: FileSynchronizer'ı kullanarak Scheduler oluşturur
     public Scheduler(FileSynchronizer fileSynchronizer) {
         this.fileSynchronizer = fileSynchronizer;
         this.scheduler = Executors.newSingleThreadScheduledExecutor();
@@ -23,7 +21,7 @@ public class Scheduler {
     public void scheduleSync(Date time) {
         long delay = time.getTime() - System.currentTimeMillis();
         if (delay <= 0) {
-            throw new IllegalArgumentException("Zamanlanmış saat gelecekte olmalıdır.");
+            throw new IllegalArgumentException("The scheduled time must be in the future.");
         }
 
         timer = new Timer();
@@ -33,11 +31,11 @@ public class Scheduler {
                 try {
                     fileSynchronizer.startSynch();
                 } catch (Exception e) {
-                    Logger.getInstance().error("Zamanlanmış senkronizasyon sırasında hata: " + e.getMessage());
+                    Logger.getInstance().error("Error during scheduled sync: " + e.getMessage());
                 }
             }
         }, delay);
-        Logger.getInstance().info("Senkronizasyon şu saatte zamanlandı: " + time);
+        Logger.getInstance().info("Sync is completed at: " + time);
     }
 
     public void startScheduledSync(long period, TimeUnit timeUnit) {
@@ -46,11 +44,11 @@ public class Scheduler {
             try {
                 fileSynchronizer.startSynch();
             } catch (Exception e) {
-                Logger.getInstance().error("Zamanlanmış senkronizasyon sırasında hata: " + e.getMessage());
+                Logger.getInstance().error("Error during scheduled sync: " + e.getMessage());
             }
         }, 0, period, timeUnit);
 
-        Logger.getInstance().info("Zamanlanmış senkronizasyon başlatıldı ve her " + period + " dakikada bir tekrarlanacak.");
+        Logger.getInstance().info("Scheduled synchronization has been started and will repeat every " + period + " time intervals.");
     }
 
     public void stopScheduler() {
@@ -60,7 +58,7 @@ public class Scheduler {
         if (scheduler != null) {
             scheduler.shutdownNow();
         }
-        Logger.getInstance().info("Tüm zamanlanmış görevler durduruldu.");
+        Logger.getInstance().info("All scheduled sync operations have been stopped.");
     }
 
 

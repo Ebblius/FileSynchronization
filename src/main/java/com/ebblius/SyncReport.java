@@ -12,12 +12,10 @@ public class SyncReport {
         this.entries = new ArrayList<>();
     }
 
-    // Rapor için yeni bir girdi ekler
     public synchronized void addEntry(String entry) {
         entries.add(entry);
     }
 
-    // Raporun özetini döndürür
     public String getSummary() {
         StringBuilder summary = new StringBuilder();
         summary.append("Sync Report Summary:\n");
@@ -40,13 +38,10 @@ public class SyncReport {
         return summary.toString();
     }
 
-    // Detaylı raporu döndürür
     public List<String> getDetailedReport() {
         return entries;
     }
 
-
-    // Raporun tamamını yazdırır
     public void printReport() {
         Logger.getInstance().info(getSummary());
         Logger.getInstance().info("Detailed Report:");

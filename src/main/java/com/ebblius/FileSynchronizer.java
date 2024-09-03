@@ -42,7 +42,6 @@ public class FileSynchronizer {
 
         Logger.getInstance().info("Starting synchronization...");
 
-        // Örnek senkronizasyon işlemi (Bu kısmı ihtiyaçlara göre genişletebilirsiniz)
         syncDirectory(sourceDirectory, targetDirectory);
         generateReport().printReport();
 
@@ -51,7 +50,6 @@ public class FileSynchronizer {
     }
 
     private void syncDirectory(Path source, Path target) throws IOException {
-        // Hedef dizin yoksa oluştur
         if (Files.notExists(target)) {
             Files.createDirectories(target);
         }
@@ -78,7 +76,6 @@ public class FileSynchronizer {
         }
     }
 
-    // Senkronizasyon raporunu oluşturur
     public SyncReport generateReport() {
         SyncReport report = new SyncReport();
         for (String entry : syncLog) {
