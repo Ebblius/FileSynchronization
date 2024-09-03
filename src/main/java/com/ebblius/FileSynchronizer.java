@@ -17,8 +17,8 @@ public class FileSynchronizer {
     private final List<String> syncLog;
     private final FileCopier fileCopier;
     private final IgnoreFileParser ignoreFileParser;
-    private final Path sourceDirectory;  // Kaynak dizin
-    private final Path targetDirectory; // Hedef dizin
+    private final Path sourceDirectory;
+    private final Path targetDirectory;
 
     public FileSynchronizer(Path sourceDirectory, Path targetDirectory, Path ignoreFile) {
         this.syncLog = new ArrayList<>();
