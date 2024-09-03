@@ -13,13 +13,21 @@ File Synchronizer is a Java-based tool that allows for asynchronous copying of f
 ## Project Structure
 
 ***src/main/java/com/ebblius/FileCopier.java*** --> Handles the copying of individual files. 
+
 ***src/main/java/com/ebblius/Main.java*** --> Entry point of the application. 
+
 ***src/main/java/com/ebblius/AsyncFileSynchronizer.java*** --> Manages the asynchronous synchronization of files. 
+
 ***src/main/java/com/ebblius/FileComparator.java*** --> Compares files to avoid unnecessary copying. 
+
 ***src/main/java/com/ebblius/SyncReport.java*** --> Generates synchronization reports. 
+
 ***src/main/java/com/ebblius/FileSynchronizer.java*** --> Manages the synchronous synchronization of files. 
+
 ***src/main/java/com/ebblius/Scheduler.java*** --> Schedules synchronization tasks. 
+
 ***src/main/java/com/ebblius/Logger.java*** --> Handles logging. 
+
 ***src/main/java/com/ebblius/IgnoreFileParser.java*** --> Parses the ignore file. 
 
 ## Prerequisites
