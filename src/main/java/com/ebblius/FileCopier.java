@@ -1,23 +1,32 @@
 package com.ebblius;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.stream.Stream;
 
 public class FileCopier {
 
-    void copyFile(Path src, Path dest) throws IOException {
+    private final FileComparator fileComparator;
+
+    public FileCopier() {
+        this.fileComparator = new FileComparator();
+    }
+
+    public void copyFile(Path src, Path dest) throws IOException {
         if (Files.notExists(src))
             throw new IOException("No such file: " + src.toAbsolutePath());
 
-        if (Files.isDirectory(dest)) {
+        if (Files.isDirectory(src)) {
             Files.createDirectories(dest);
             return;
         }
+
+        Files.createFile(dest);
+
+        if (fileComparator.compareFiles(src, dest))
+            return;
 
         try (InputStream srcStream = Files.newInputStream(src);
              OutputStream destStream = Files.newOutputStream(dest)) {
@@ -25,7 +34,7 @@ public class FileCopier {
         }
     }
 
-    void copyFiles(Path[] srcs, Path dest) throws IOException {
+    public void copyFiles(Path[] srcs, Path dest) throws IOException {
         if (Files.notExists(dest))
             Files.createDirectories(dest);
 

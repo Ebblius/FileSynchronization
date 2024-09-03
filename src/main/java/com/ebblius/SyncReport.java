@@ -13,12 +13,12 @@ public class SyncReport {
     }
 
     // Rapor için yeni bir girdi ekler
-    void addEntry(String entry) {
+    public synchronized void addEntry(String entry) {
         entries.add(entry);
     }
 
     // Raporun özetini döndürür
-    String getSummary() {
+    public String getSummary() {
         StringBuilder summary = new StringBuilder();
         summary.append("Sync Report Summary:\n");
         summary.append("Total actions: ").append(entries.size()).append("\n");
@@ -41,7 +41,7 @@ public class SyncReport {
     }
 
     // Detaylı raporu döndürür
-    List<String> getDetailedReport() {
+    public List<String> getDetailedReport() {
         return entries;
     }
 

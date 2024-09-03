@@ -4,19 +4,18 @@ import org.apache.logging.log4j.LogManager;
 
 public class Logger {
 
-    private static Logger instance;
     private final org.apache.logging.log4j.Logger log4jLogger;
 
     Logger() {
         log4jLogger = LogManager.getLogger();
     }
 
+    private static final class InstanceHolder {
+        private static final Logger instance = new Logger();
+    }
+
     public static Logger getInstance() {
-        synchronized (Logger.class) {
-            if (instance == null)
-                instance = new Logger();
-        }
-        return instance;
+        return InstanceHolder.instance;
     }
 
     public void warn(Object message) {
